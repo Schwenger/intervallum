@@ -41,7 +41,7 @@ use std::iter::{Peekable, IntoIterator};
 use std::fmt::{Formatter, Display, Error};
 use std::ops::{Add, Sub, Mul};
 
-use num::{Zero, Num};
+use num::{Zero, Num, One};
 
 #[derive(Debug, Clone)]
 pub struct IntervalSet<Bound: Width> {
@@ -328,13 +328,23 @@ impl<Bound: Width+Num> Empty for IntervalSet<Bound>
   }
 }
 
-/// `IsSingleton` and `IsEmpty` are defined automatically in `gcollections`.
-impl<Bound: Width+Num> Cardinality for IntervalSet<Bound>
-{
-  type Size = <Bound as Width>::Output;
-
-  fn size(&self) -> <Bound as Width>::Output {
+impl<Bound: Width+Num> IntervalSet<Bound> {
+  pub fn size(&self) -> <Bound as Width>::Output {
     self.size.clone()
+  }
+}
+
+impl<Bound: Width+Num> IsSingleton for IntervalSet<Bound> where Bound: Width + Num
+{
+  fn is_singleton(&self) -> bool {
+    self.size() == <<Bound as Width>::Output as One>::one()
+  }
+}
+
+impl<Bound: Width+Num> IsEmpty for IntervalSet<Bound> where Bound: Width + Num
+{
+  fn is_empty(&self) -> bool {
+    self.size() == <<Bound as Width>::Output as Zero>::zero()
   }
 }
 

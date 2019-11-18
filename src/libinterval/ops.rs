@@ -9,7 +9,7 @@
 //! Interval and bound specific operations.
 
 use gcollections::kind::*;
-use num::{Unsigned, Integer};
+use num::{Unsigned, Num};
 use num::Bounded as NumBounded;
 
 pub trait Hull<RHS = Self>
@@ -31,7 +31,7 @@ pub trait Whole
 /// Limit of a bound for which the distance between `min_value()` and `max_value()` can be represented in the type `Output`.
 pub trait Width : Ord + Clone
 {
-  type Output: Unsigned + Integer + Clone;
+  type Output: Clone + Sized + Num + PartialOrd;
 
   fn max_value() -> Self;
   fn min_value() -> Self;

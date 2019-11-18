@@ -45,7 +45,7 @@ use ops::*;
 use std::ops::{Add, Sub, Mul};
 use std::cmp::{min, max};
 use std::fmt::{Formatter, Display, Error};
-use num::{Zero, Num};
+use num::{Zero, Num, One};
 
 /// Closed interval (endpoints included).
 #[derive(Debug, Copy, Clone)]
@@ -158,13 +158,23 @@ impl<Bound> Whole for Interval<Bound> where
   }
 }
 
-/// `IsSingleton` and `IsEmpty` are defined automatically in `gcollections`.
-impl<Bound> Cardinality for Interval<Bound> where
- Bound: Width + Num
+impl<Bound: Width+Num> IsSingleton for Interval<Bound>
 {
-  type Size = <Bound as Width>::Output;
+  fn is_singleton(&self) -> bool {
+    self.size() == <<Bound as Width>::Output as One>::one()
+  }
+}
 
-  fn size(&self) -> <Bound as Width>::Output {
+impl<Bound: Width+Num> IsEmpty for Interval<Bound>
+{
+  fn is_empty(&self) -> bool {
+    self.size() == <<Bound as Width>::Output as Zero>::zero()
+  }
+}
+
+impl<Bound: Width + Num> Interval<Bound>
+{
+  pub fn size(&self) -> <Bound as Width>::Output {
     if self.lb > self.ub { <<Bound as Width>::Output>::zero() }
     else {
       Bound::width(&self.lb, &self.ub)
