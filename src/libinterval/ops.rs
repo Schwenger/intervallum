@@ -10,7 +10,7 @@
 
 use gcollections::kind::*;
 use num::Bounded as NumBounded;
-use num::{Num, Unsigned};
+use num::Num;
 
 pub trait Hull<RHS = Self> {
     type Output;

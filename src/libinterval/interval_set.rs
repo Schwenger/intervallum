@@ -170,9 +170,9 @@ where
         while left <= right {
             let mid_idx = left + (right - left) / 2;
             let mid = &self.intervals[mid_idx];
-            if &mid.lower() > value {
+            if mid.lower() > *value {
                 right = mid_idx - 1;
-            } else if &mid.upper() < value {
+            } else if mid.upper() < *value {
                 left = mid_idx + 1;
             } else {
                 return (mid_idx, mid_idx);
@@ -353,7 +353,7 @@ where
     F: Fn(&Item, &Item) -> bool,
     Item: Bounded,
 {
-    static NON_EMPTY_PRECONDITION: &'static str = "`advance_one` expects both interval iterators to be non_empty.";
+    static NON_EMPTY_PRECONDITION: &str = "`advance_one` expects both interval iterators to be non_empty.";
     let who_advance = {
         let i = a.peek().expect(NON_EMPTY_PRECONDITION);
         let j = b.peek().expect(NON_EMPTY_PRECONDITION);
@@ -607,12 +607,10 @@ where
                 res.push(self.intervals[i].clone());
             }
             res
-        } else {
-            if self.is_empty() || lb > self.back().upper() {
+        } else if self.is_empty() || lb > self.back().upper() {
                 IntervalSet::empty()
-            } else {
-                self.clone()
-            }
+        } else {
+            self.clone()
         }
     }
 }
@@ -631,12 +629,10 @@ where
                 res.push(Interval::new(self.intervals[right].lower(), ub));
             }
             res
+        } else if self.is_empty() || ub < self.front().lower() {
+            IntervalSet::empty()
         } else {
-            if self.is_empty() || ub < self.front().lower() {
-                IntervalSet::empty()
-            } else {
-                self.clone()
-            }
+            self.clone()
         }
     }
 }
@@ -645,9 +641,7 @@ impl<Bound: Width + Num> Subset for IntervalSet<Bound> {
     fn is_subset(&self, other: &IntervalSet<Bound>) -> bool {
         if self.is_empty() {
             true
-        } else if self.size() > other.size() {
-            false
-        } else if !self.span().is_subset(&other.span()) {
+        } else if self.size() > other.size() || !self.span().is_subset(&other.span()) {
             false
         } else {
             let mut left = 0;

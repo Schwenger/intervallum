@@ -27,7 +27,6 @@
 //!
 
 extern crate num;
-#[macro_use]
 extern crate gcollections;
 extern crate trilean;
 

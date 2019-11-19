@@ -354,7 +354,7 @@ where
     Bound: Ord,
 {
     fn contains(&self, value: &Bound) -> bool {
-        value >= &self.lb && value <= &self.ub
+        *value >= self.lb && *value <= self.ub
     }
 }
 
@@ -537,6 +537,7 @@ where
 {
     type Output = Interval<Bound>;
 
+    #[allow(clippy::suspicious_arithmetic_impl)]
     fn add(self, other: &Interval<Bound>) -> Interval<Bound> {
         if self.is_empty() || other.is_empty() {
             Interval::empty()
@@ -571,6 +572,7 @@ where
 {
     type Output = Interval<Bound>;
 
+    #[allow(clippy::suspicious_arithmetic_impl)]
     fn sub(self, other: &Interval<Bound>) -> Interval<Bound> {
         if self.is_empty() || other.is_empty() {
             Interval::empty()
@@ -664,6 +666,7 @@ where
     type Output = Interval<Bound>;
 
     // Caution: Consider `[0,1] * [3,5]`, the result `[0,5]` is an over-approximation.
+    #[allow(clippy::suspicious_arithmetic_impl)]
     fn mul(self, other: &Interval<Bound>) -> Interval<Bound> {
         if self.is_empty() || other.is_empty() {
             Interval::empty()
